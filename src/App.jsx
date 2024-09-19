@@ -48,7 +48,7 @@ const App = () => {
   }, []);
 
   // Fetch leaderboard whenever an update is emitted from the server
-  socket.on("leaderboard-update", () => {
+  socket.on("leaderboard-update", async () => {
     console.log("Leader board is called ");
     const fetchUpdatedLeaderboard = async () => {
       try {
@@ -61,7 +61,7 @@ const App = () => {
         console.error("Error fetching updated leaderboard:", error);
       }
     };
-    fetchUpdatedLeaderboard();
+    await fetchUpdatedLeaderboard();
   });
 
   const handleClaim = async () => {
