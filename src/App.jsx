@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-
+// const socket = io("http://localhost:8000");
+const socket = io("https://taskplanet-backend.vercel.app");
+const axiosInstance = axios.create({
+  // baseURL: "http://localhost:8000",
+  baseURL: "https://taskplanet-backend.vercel.app",
+});
 const App = () => {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [message, setMessage] = useState("");
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
- const socket = io("https://taskplanet-backend.vercel.app");
+
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const userResponse = await axios.get(
-          "https://taskplanet-backend.vercel.app/user/users"
-        );
+        const userResponse = await axiosInstance.get("/user/users");
         const user = userResponse.data.users;
         setUsers(user);
       } catch (error) {
@@ -24,8 +28,8 @@ const App = () => {
 
     const fetchLeaderboard = async () => {
       try {
-        const leaderboardResponse = await axios.get(
-          "https://taskplanet-backend.vercel.app/user/leaderboard"
+        const leaderboardResponse = await axiosInstance.get(
+          "/user/leaderboard"
         );
         const Leaders = leaderboardResponse.data.leaders;
         console.log("this is updated leaders:", Leaders);
@@ -44,41 +48,30 @@ const App = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    
-
-    // Fetch leaderboard whenever an update is emitted from the server
-    socket.on("leaderboard-update", () => {
-      console.log("Leader board is called ");
-      const fetchUpdatedLeaderboard = async () => {
-        try {
-          const leaderboardResponse = await axios.get(
-            "https://taskplanet-backend.vercel.app/user/leaderboard"
-          );
-          const Leaders = leaderboardResponse.data.leaders;
-          setLeaderboard(Leaders);
-        } catch (error) {
-          console.error("Error fetching updated leaderboard:", error);
-        }
-      };
-
-      fetchUpdatedLeaderboard();
-    });
-
-    return () => {
-      socket.disconnect();
+  // Fetch leaderboard whenever an update is emitted from the server
+  socket.on("leaderboard-update", () => {
+    console.log("Leader board is called ");
+    const fetchUpdatedLeaderboard = async () => {
+      try {
+        const leaderboardResponse = await axiosInstance.get(
+          "/user/leaderboard"
+        );
+        const Leaders = leaderboardResponse.data.leaders;
+        setLeaderboard(Leaders);
+      } catch (error) {
+        console.error("Error fetching updated leaderboard:", error);
+      }
     };
-  }, []);
+    fetchUpdatedLeaderboard();
+  });
 
   const handleClaim = async () => {
     if (selectedUserId) {
       try {
-        const response = await axios.post(
-          `https://taskplanet-backend.vercel.app/user/claim`,
-          {
-            userId: selectedUserId,
-          }
-        );
+        socket.emit("claim");
+        const response = await axiosInstance.post(`/user/claim`, {
+          userId: selectedUserId,
+        });
         const { user, points } = response.data;
         setMessage(`${user.name} received ${points} points!`);
         // fetchLeaderboard();
