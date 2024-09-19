@@ -46,11 +46,26 @@ const App = () => {
   useEffect(() => {
     const socket = io("https://taskplanet-backend.vercel.app");
 
+    // Fetch leaderboard whenever an update is emitted from the server
     socket.on("leaderboard-update", () => {
-      fetchLeaderboard(); // Updating leaderboard on socket event
+      const fetchUpdatedLeaderboard = async () => {
+        try {
+          const leaderboardResponse = await axios.get(
+            "https://taskplanet-backend.vercel.app/user/leaderboard"
+          );
+          setLeaderboard(leaderboardResponse.data.leaders);
+        } catch (error) {
+          console.error("Error fetching updated leaderboard:", error);
+        }
+      };
+
+      fetchUpdatedLeaderboard();
     });
 
-    return () => socket.disconnect();
+    // Clean up socket connection on component unmount
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const handleClaim = async () => {
