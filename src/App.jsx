@@ -13,7 +13,7 @@ const App = () => {
     const fetchUsers = async () => {
       try {
         const userResponse = await axios.get(
-          "http://localhost:8000/user/users"
+          "https://taskplanet-backend.vercel.app/user/users"
         );
         const user = userResponse.data.users;
         setUsers(user);
@@ -25,7 +25,7 @@ const App = () => {
     const fetchLeaderboard = async () => {
       try {
         const leaderboardResponse = await axios.get(
-          "http://localhost:8000/user/leaderboard"
+          "https://taskplanet-backend.vercel.app/user/leaderboard"
         );
         const Leaders = leaderboardResponse.data.leaders;
         setLeaderboard(Leaders);
@@ -44,7 +44,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://localhost:8000");
+    const socket = io("https://taskplanet-backend.vercel.app");
 
     socket.on("leaderboard-update", () => {
       fetchLeaderboard(); // Updating leaderboard on socket event
@@ -56,7 +56,7 @@ const App = () => {
   const handleClaim = async () => {
     if (selectedUserId) {
       try {
-        const response = await axios.post(`http://localhost:8000/user/claim`, {
+        const response = await axios.post(`https://taskplanet-backend.vercel.app/user/claim`, {
           userId: selectedUserId,
         });
         const { user, points } = response.data;
@@ -71,7 +71,7 @@ const App = () => {
   const fetchLeaderboard = async () => {
     try {
       const leaderboardResponse = await axios.get(
-        "http://localhost:8000/user/leaderboard"
+        "https://taskplanet-backend.vercel.app/user/leaderboard"
       );
       const Leaders = leaderboardResponse.data.leaders;
       setLeaderboard(Leaders);
