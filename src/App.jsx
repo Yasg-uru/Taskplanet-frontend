@@ -14,7 +14,6 @@ const App = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
