@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
+const socket = io("https://taskplanet-backend.onrender.com");
 // const socket = io("http://localhost:8000");
-const socket = io("https://taskplanet-backend.vercel.app");
+// const socket = io("https://taskplanet-backend.vercel.app");
 const axiosInstance = axios.create({
+  baseURL: "https://taskplanet-backend.onrender.com",
   // baseURL: "http://localhost:8000",
-  baseURL: "https://taskplanet-backend.vercel.app",
+  // baseURL: "https://taskplanet-backend.vercel.app",
 });
 const App = () => {
   const [users, setUsers] = useState([]);
